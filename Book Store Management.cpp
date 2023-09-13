@@ -16,12 +16,15 @@ int main()
 	while (!IsLoggedIn)
 	{
 		string choice;
+
+		system("cls");
+
 		cout << "\t\t\t____________________________________________________________________\n\n\n";
 		cout << "\t\t\t             Welcome to the Login Page of The Bookstore!            \n\n\n";
 		cout << "\t\t\t____________________________     MENU    ___________________________\n\n\n";
-		cout << "\t|	Press 1 for LOGIN                      |" << endl;
-		cout << "\t|	Press 2 for REGISTER                   |" << endl;
-		cout << "\t|	Press 3 for EXIT                       |" << endl;
+		cout << "\t|	Enter 1 for LOGIN                      |" << endl;
+		cout << "\t|	Enter 2 for REGISTER                   |" << endl;
+		cout << "\t|	Enter 3 for EXIT                       |" << endl;
 		cout << "\n\t\t\tPlease enter your choice: ";
 		cin >> choice;
 		cin.ignore();
@@ -44,12 +47,55 @@ int main()
 		{
 			system("cls");
 			cout << "\t\t\t Please enter the given option above!\n\n";
-			cin.get();
+			system("PAUSE");
 		}
 	}
 
 	//The Bookstore Page
-	cout << "\t\t\t Please wait for the next feature!!!";
+	while (IsLoggedIn)
+	{
+		string user_choice;
+
+		system("cls");
+
+		cout << "\t\t\t____________________________________________________________________\n\n\n";
+		cout << "\t\t\t             Welcome to the Main Page of The Bookstore!            \n\n\n";
+		cout << "\t\t\t____________________________     MENU    ___________________________\n\n\n";
+		cout << "\t|	Enter 1 for STAFF MANAGING                       |" << endl;
+		cout << "\t|	Enter 2 for STORE MANAGING                       |" << endl;
+		cout << "\t|	Enter 3 if you wanna know more what our store    |" << endl;
+		cout << "\t|	Enter 4 for EXIT                                 |" << endl;
+		cout << "\n\t\t\tPlease enter your choice: ";
+		cin >> user_choice;
+		cin.ignore();
+		cout << endl;
+
+		if (user_choice == "1")
+		{
+			StaffManagement();
+		}
+		else if (user_choice == "2")
+		{
+			cout << "\t\t\t Sorry, feature available soon!\n";
+			system("PAUSE");
+		}
+		else if (user_choice == "3")
+		{
+			cout << "\t\t\t Sorry, feature available soon!\n";
+			system("PAUSE");
+		}
+		else if (user_choice == "4")
+		{
+			cout << "\t\t\t Thank you!! Have a great day!";
+			IsLoggedIn = false;
+		}
+		else
+		{
+			system("cls");
+			cout << "\t\t\t Please enter the given option above!\n\n";
+			system("PAUSE");
+		}
+	}
 }
 
 //Functions here
@@ -58,7 +104,7 @@ void openFail()
 	system("cls");
 	cout << "\t\t\t Cannot open user data files!\n\n\n";
 	cout << "\t\t\t Please try again!";
-	cin.get();
+	system("PAUSE");
 }
 
 void login(bool& result)
@@ -72,7 +118,6 @@ void login(bool& result)
 	cin >> username;
 	cout << "\t\t\t Password: ";
 	cin >> password;
-	cin.ignore();
 
 	if (username == "exit" || pass == "exit")
 	{
@@ -102,12 +147,12 @@ void login(bool& result)
 			{
 				cout << "\t\t\t Login successfully as user: " << username << endl;
 				result = true;
-				cin.get();
+				system("PAUSE");
 			}
 			else
 			{
 				cout << "\t\t\t Login failed! Please check your username and password!\n\n\n";
-				cin.get();
+				system("PAUSE");
 				login(result);
 			}
 			filein.close();
@@ -117,6 +162,7 @@ void login(bool& result)
 
 void registration()
 {
+	int found = 0;
 	string r_Username, r_Password, r_user;
 	system("cls");
 	cout << "\t\t\t You can go back by typing \"exit\"!\n\n";
@@ -124,7 +170,6 @@ void registration()
 	cin >> r_Username;
 	cout << "\t\t\t Enter the password: ";
 	cin >> r_Password;
-	cin.ignore();
 
 	if (r_Username == "exit" || r_Password == "exit")
 	{
@@ -132,30 +177,37 @@ void registration()
 	}
 	else
 	{
-		fstream fileout("user_data.txt", ios::app | ios::in | ios::binary);
-		if (!fileout)
+		ifstream filein("user_data.txt", ios::in | ios::binary);
+		if (!filein)
 		{
 			openFail();
 		}
 		else
 		{
-			while (getline(fileout, r_user))
+			while (getline(filein, r_user))
 			{
 				if (r_user.find(r_Username) != string::npos)
 				{
-					cout << "\t\t\t User has already been added!\n";
-					cin.get();
-					registration();
-				}
-				else
-				{
-					fileout << r_Username << ' ' << r_Password << endl;
-					system("cls");
-					cout << "\t\t\t You are now registered!\n\n";
-					cin.get();
+					found += 1;
+					break;
 				}
 			}
-			fileout.close();
+			filein.close();
+
+			if (found == 1)
+			{
+				cout << "\t\t\t User has already been added!\n";
+				system("PAUSE");
+				registration();
+			}
+			else 
+			{
+				ofstream fileout("user_data.txt", ios::app | ios::binary);
+				fileout << r_Username << ' ' << r_Password << endl;
+				system("cls");
+				cout << "\t\t\t You are now registered!\n\n";
+				system("PAUSE");
+			}
 		}
 	}
 }
