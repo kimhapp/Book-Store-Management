@@ -2,6 +2,10 @@
 #include <fstream>
 #include <cstdio>
 
+string mainFile = "Staff.txt";
+string tempFile = "Staff_Temp.txt";
+string copyFile = "Staff_Temp1.txt";
+
 void staff::add()
 {
 	string s_info, name, age, email, role, phone;
@@ -13,11 +17,11 @@ void staff::add()
 	cout << "\t\t\t Staff's email: "; cin >> email;
 	cout << "\t\t\t Staff's role: "; cin >> role;
 	cout << "\t\t\t Staff's phone: "; cin >> phone;
-	cin.ignore();
+	cout << endl;
 
 	if (name == "exit" || age == "exit" || email == "exit" || role == "exit" || phone == "exit")
 	{
-		StaffManagement();
+		system("PAUSE");
 	}
 	else
 	{
@@ -34,8 +38,7 @@ void staff::add()
 			changes += 1;
 		}
 
-		cin.get();
-		StaffManagement();
+		system("PAUSE");
 	}
 
 }
@@ -49,7 +52,7 @@ void staff::Remove()
 
 	if (name == "exit")
 	{
-		StaffManagement();
+		system("PAUSE");
 	}
 	else
 	{
@@ -82,14 +85,13 @@ void staff::Remove()
 				std::remove(f_r);
 				std::rename(f_r1, f_r);
 
-				cin.get();
-				StaffManagement();
+				system("PAUSE");
 			}
 		}
 		else
 		{
 			cout << "\t\t\t This staff is not in this file.\n\n";
-			cin.get();
+			system("PAUSE");
 			Remove();
 		}
 	}
@@ -100,11 +102,10 @@ void staff::update()
 	system("cls");
 	cout << "\t\t\t You can go back by typing \"exit\"!\n\n";
 	cout << "\t\t\t Please enter the staff's name you want to update: "; cin >> u_name;
-	cin.ignore();
 
 	if (u_name == "exit")
 	{
-		StaffManagement();
+		system("PAUSE");
 	}
 	else
 	{
@@ -122,7 +123,7 @@ void staff::update()
 
 			if (name == "exit" || age == "exit" || email == "exit" || role == "exit" || phone == "exit")
 			{
-				StaffManagement();
+				system("PAUSE");
 			}
 			else
 			{
@@ -137,6 +138,7 @@ void staff::update()
 					while (getline(file_u, u_info))
 					{
 						u_info.replace(u_info.find(u_name), u_info.length(), "");
+
 						if (!u_info.empty())
 						{
 							file_u1 << u_info << endl;
@@ -156,15 +158,14 @@ void staff::update()
 					std::remove(f_u);
 					std::rename(f_u1, f_u);
 
-					cin.get();
-					StaffManagement();
+					system("PAUSE");
 				}
 			}
 		}
 		else
 		{
 			cout << "\t\t\t This staff is not in this file.\n\n";
-			cin.get();
+			system("PAUSE");
 			update();
 		}
 	}
@@ -193,22 +194,21 @@ void staff::display()
 		file_All.close();
 	}
 
-	cin.get();
-	StaffManagement();
+	system("PAUSE");
 }
 void staff::openFail()
 {
 	system("cls");
 	cout << "\t\t\t Cannot open user data files!\n\n\n";
 	cout << "\t\t\t Please try again!";
-	cin.get();
+	system("PAUSE");
 	StaffManagement();
 }
 void staff::save()
 {
 	system("cls");
 
-	if (changes > 0 )
+	if (changes > 0)
 	{
 		const char* main_f = mainFile.c_str();
 		const char* temp_f = tempFile.c_str();
@@ -224,81 +224,143 @@ void staff::save()
 		cout << "\t\t\t You have made 0 change, no need to save!\n";
 	}
 
-	cin.get();
-	StaffManagement();
+	system("PAUSE");
 }
 void staff::Search()
 {
+	int found = 0;
 	string nameDisplay, staffInfo, staffName, staffAge, staffEmail, staffRole, staffPhone;
 	system("cls");
 	cout << "\t\t\t You can go back by typing \"exit\"!\n\n";
 	cout << "\t\t\t Please enter the staff's name you want to display: "; cin >> nameDisplay;
-	cin.ignore();
 
 	if (nameDisplay == "exit")
 	{
-		StaffManagement();
+		system("PAUSE");
 	}
 	else
 	{
 		if (search(tempFile, nameDisplay, staffName) == true)
 		{
-			ifstream file_ind(tempFile, ios::in | ios::binary);
-			if (!file_ind)
+			ifstream file_inD(tempFile, ios::in | ios::binary);
+			if (!file_inD)
 			{
 				openFail();
 			}
 			else
 			{
-				while (getline(file_ind, staffInfo))
+				ofstream file_temp(copyFile, ios::app | ios::binary);
+				while (getline(file_inD, staffInfo))
 				{
 					if (staffInfo.find(nameDisplay) != string::npos)
 					{
-						fstream file_temp(copyFile, ios::app | ios::in | ios::binary);
 						file_temp << staffInfo;
-						while (file_temp >> staffName >> staffAge >> staffEmail >> staffRole >> staffPhone)
-						{
-							cout << "\t\t\t Staff's name: " << staffName << endl;
-							cout << "\t\t\t Staff's age: " << staffAge << endl;
-							cout << "\t\t\t Staff's email: " << staffEmail << endl;
-							cout << "\t\t\t Staff's role: " << staffRole << endl;
-							cout << "\t\t\t Staff's phone: " << staffPhone << "\n\n\n";
-						}
-						file_temp.close();
-
-						const char* f = copyFile.c_str();
-						std::remove(f);
+						found += 1;
+						break;
 					}
 				}
-				file_ind.close();
+				file_inD.close();
+				file_temp.close();
 
-				cin.get();
-				StaffManagement();
+				if (found == 1)
+				{
+					ifstream file_temp1(copyFile, ios::in | ios::binary);
+					while (file_temp1 >> staffName >> staffAge >> staffEmail >> staffRole >> staffPhone)
+					{
+						cout << "\t\t\t Staff's name: " << staffName << endl;
+						cout << "\t\t\t Staff's age: " << staffAge << endl;
+						cout << "\t\t\t Staff's email: " << staffEmail << endl;
+						cout << "\t\t\t Staff's role: " << staffRole << endl;
+						cout << "\t\t\t Staff's phone: " << staffPhone << "\n\n\n";
+						system("PAUSE");
+					}
+					file_temp1.close();
+
+					const char* f = copyFile.c_str();
+					std::remove(f);
+				}
 			}
 		}
 		else
 		{
 			cout << "\t\t\t This staff is not in this file.\n\n";
-			cin.get();
+			system("PAUSE");
 			Search();
 		}
 	}
 }
 void staff::quit()
 {
+	string answer;
 	system("cls");
 	if (changes > 0)
 	{
+		cout << "\t\t\t There are some changes you have made recently, do you want to save first before quitting?\n\t\t\t Please type yes or no or cancel: ";
+		cin >> answer;
+		cin.ignore();
 
+		if (answer == "yes")
+		{
+			save();
+
+			goBackOrQuit();
+		}
+		else if (answer == "no")
+		{
+			const char* temp_f = tempFile.c_str();
+
+			remove(temp_f);
+			changes = 0;
+			
+			goBackOrQuit();
+		}
+		else if (answer == "cancel")
+		{
+			cout << "\t\t\t Returning to Staff Main Menu!\n";
+			system("PAUSE");
+			StaffManagement();
+		}
+		else
+		{
+			cout << "\t\t\t Please input a valid answer!\n";
+			system("PAUSE");
+			quit();
+		}
 	}
 	else
 	{
-
+		goBackOrQuit();
 	}
+}
+void goBackOrQuit()
+{
+	string choice;
+	while (choice != "quit" || choice != "back")
+	{
+		cout << "\t\t\t Do you want to return back to the Main Page or quit the program?\n\t\t\t Please type quit or back: ";
+		cin >> choice;
 
+		system("cls");
+		if (choice == "quit")
+		{
+			cout << "\t\t\t Thank you!! Have a great day!\n\n\n";
+			exit(0);
+		}
+		else if (choice == "back")
+		{
+			cout << "\t\t\t Returning to Main Page!\n\n\n";
+			system("PAUSE");
+		}
+		else
+		{
+			cout << "\t\t\t Please input a valid answer!\n\n\n";
+			system("PAUSE");
+		}
+	}
 }
 bool search(string filename, string s_name, string list_name)
 {
+	int found = 0;
 	staff Staff;
 	fstream file_find(filename, ios::app | ios::in | ios::binary);
 	if (!file_find)
@@ -311,34 +373,90 @@ bool search(string filename, string s_name, string list_name)
 		{
 			if (list_name.find(s_name) != string::npos)
 			{
-				return true;
+				found += 1;
 				break;
-			}
-			else
-			{
-				return false;
 			}
 		}
 		file_find.close();
+
+		if (found == 1)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 }
+
+//The Staff Management Page
 void StaffManagement()
 {
 	staff staff;
-	string copy_line;
-	ifstream fileorig(mainFile, ios::app | ios::binary);
-	ofstream filecopy(tempFile, ios::in | ios::binary);
-	if (!fileorig || !filecopy)
+	string copyLine;
+	ifstream fileorig(mainFile, ios::in | ios::binary);
+	ofstream filecopy(tempFile, ios::app | ios::binary);
+	while (getline(fileorig, copyLine))
 	{
-		staff.openFail();
-	}
-	else
-	{
-		while (getline(fileorig, copy_line))
-		{
-			filecopy << copy_line << "\n";
-		}
+		filecopy << copyLine << "\n";
 	}
 	fileorig.close();
 	filecopy.close();
+
+	string staffChoice;
+
+	while (staffChoice != "7")
+	{
+		system("cls");
+		cout << "\t\t\t____________________________________________________________________\n\n\n";
+		cout << "\t\t\t             Welcome to the Staff Page of The Bookstore!            \n\n\n";
+		cout << "\t\t\t____________________________     MENU    ___________________________\n\n\n";
+		cout << "\t|	Enter 1 for DISPLAY LIST               |" << endl;
+		cout << "\t|	Enter 2 for SEARCH STAFF               |" << endl;
+		cout << "\t|	Enter 3 for ADD STAFF                  |" << endl;
+		cout << "\t|	Enter 4 for UPDATE STAFF               |" << endl;
+		cout << "\t|	Enter 5 for REMOVE STAFF               |" << endl;
+		cout << "\t|	Enter 6 for SAVE                       |" << endl;
+		cout << "\t|	Enter 7 for QUIT                       |" << endl;
+		cout << "\n\t\t\tPlease enter your choice: ";
+		cin >> staffChoice;
+		cin.ignore();
+		cout << endl;
+
+		if (staffChoice == "1")
+		{
+			staff.display();
+		}
+		else if (staffChoice == "2")
+		{
+			staff.Search();
+		}
+		else if (staffChoice == "3")
+		{
+			staff.add();
+		}
+		else if (staffChoice == "4")
+		{
+			staff.update();
+		}
+		else if (staffChoice == "5")
+		{
+			staff.Remove();
+		}
+		else if (staffChoice == "6")
+		{
+			staff.save();
+		}
+		else if (staffChoice == "7")
+		{
+			staff.quit();
+		}
+		else
+		{
+			system("cls");
+			cout << "\t\t\t Please enter the given option above!\n\n";
+			system("PAUSE");
+		}
+	}
 }
