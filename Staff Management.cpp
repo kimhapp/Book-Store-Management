@@ -171,107 +171,30 @@ void staff::update()
 }
 void staff::display()
 {
-	string option, staffName, staffAge, staffEmail, staffRole, staffPhone;
+	string staffName, staffAge, staffEmail, staffRole, staffPhone;
 	system("cls");
-	cout << "\t\t\t You can go back by typing \"exit\"!\n\n";
-	cout << "\t\t\t Do you want to display all in the list or individually?\n";
-	cout << "\t\t\t Option 1 for all and 2 for individually!\n";
-	cout << "\t\t\t Option: ";  cin >> option;
-	cin.ignore();
+	cout << "\t\t\t Here is list of all staffs\n\n";
 
-	if (option == "1")
+	ifstream file_All(tempFile, ios::in | ios::binary);
+	if (!file_All)
 	{
-		system("cls");
-		cout << "\t\t\t Here is list of all staffs\n\n";
-
-		ifstream file_All(tempFile, ios::in | ios::binary);
-		if (!file_All)
-		{
-			openFail();
-		}
-		else
-		{
-			while (file_All >> staffName >> staffAge >> staffEmail >> staffRole >> staffPhone)
-			{
-				cout << "\t\t\t Staff's name: " << staffName << endl;
-				cout << "\t\t\t Staff's age: " << staffAge << endl;
-				cout << "\t\t\t Staff's email: " << staffEmail << endl;
-				cout << "\t\t\t Staff's role: " << staffRole << endl;
-				cout << "\t\t\t Staff's phone: " << staffPhone << "\n\n\n";
-			}
-			file_All.close();
-		}
-		
-		cin.get();
-		StaffManagement();
-	}
-	else if (option == "2")
-	{
-		string nameDisplay, staffInfo;
-		system("cls");
-		cout << "\t\t\t You can go back by typing \"exit\"!\n\n";
-		cout << "\t\t\t Please enter the staff's name you want to display: "; cin >> nameDisplay;
-		cin.ignore();
-
-		if (nameDisplay == "exit")
-		{
-			StaffManagement();
-		}
-		else
-		{
-			if (search(tempFile, nameDisplay, staffName) == true)
-			{
-				ifstream file_ind(tempFile, ios::in | ios::binary);
-				if (!file_ind)
-				{
-					openFail();
-				}
-				else
-				{
-					while (getline(file_ind, staffInfo))
-					{
-						if (staffInfo.find(nameDisplay) != string::npos)
-						{
-							fstream file_temp(copyFile, ios::app | ios::in | ios::binary);
-							file_temp << staffInfo;
-							while (file_temp >> staffName >> staffAge >> staffEmail >> staffRole >> staffPhone)
-							{
-								cout << "\t\t\t Staff's name: " << staffName << endl;
-								cout << "\t\t\t Staff's age: " << staffAge << endl;
-								cout << "\t\t\t Staff's email: " << staffEmail << endl;
-								cout << "\t\t\t Staff's role: " << staffRole << endl;
-								cout << "\t\t\t Staff's phone: " << staffPhone << "\n\n\n";
-							}
-							file_temp.close();
-							
-							const char* f = copyFile.c_str();
-							std::remove(f);
-						}
-					}
-					file_ind.close();
-
-					cin.get();
-					StaffManagement();
-				}
-			}
-			else
-			{
-				cout << "\t\t\t This staff is not in this file.\n\n";
-
-				cin.get();
-				display();
-			}
-		}
+		openFail();
 	}
 	else
 	{
-		system("cls");
-		cout << "\t\t\t Please enter the given option above!\n\n";
-
-		cin.get();
-		display();
+		while (file_All >> staffName >> staffAge >> staffEmail >> staffRole >> staffPhone)
+		{
+			cout << "\t\t\t Staff's name: " << staffName << endl;
+			cout << "\t\t\t Staff's age: " << staffAge << endl;
+			cout << "\t\t\t Staff's email: " << staffEmail << endl;
+			cout << "\t\t\t Staff's role: " << staffRole << endl;
+			cout << "\t\t\t Staff's phone: " << staffPhone << "\n\n\n";
+		}
+		file_All.close();
 	}
 
+	cin.get();
+	StaffManagement();
 }
 void staff::openFail()
 {
@@ -306,11 +229,72 @@ void staff::save()
 }
 void staff::Search()
 {
-	
+	string nameDisplay, staffInfo, staffName, staffAge, staffEmail, staffRole, staffPhone;
+	system("cls");
+	cout << "\t\t\t You can go back by typing \"exit\"!\n\n";
+	cout << "\t\t\t Please enter the staff's name you want to display: "; cin >> nameDisplay;
+	cin.ignore();
+
+	if (nameDisplay == "exit")
+	{
+		StaffManagement();
+	}
+	else
+	{
+		if (search(tempFile, nameDisplay, staffName) == true)
+		{
+			ifstream file_ind(tempFile, ios::in | ios::binary);
+			if (!file_ind)
+			{
+				openFail();
+			}
+			else
+			{
+				while (getline(file_ind, staffInfo))
+				{
+					if (staffInfo.find(nameDisplay) != string::npos)
+					{
+						fstream file_temp(copyFile, ios::app | ios::in | ios::binary);
+						file_temp << staffInfo;
+						while (file_temp >> staffName >> staffAge >> staffEmail >> staffRole >> staffPhone)
+						{
+							cout << "\t\t\t Staff's name: " << staffName << endl;
+							cout << "\t\t\t Staff's age: " << staffAge << endl;
+							cout << "\t\t\t Staff's email: " << staffEmail << endl;
+							cout << "\t\t\t Staff's role: " << staffRole << endl;
+							cout << "\t\t\t Staff's phone: " << staffPhone << "\n\n\n";
+						}
+						file_temp.close();
+
+						const char* f = copyFile.c_str();
+						std::remove(f);
+					}
+				}
+				file_ind.close();
+
+				cin.get();
+				StaffManagement();
+			}
+		}
+		else
+		{
+			cout << "\t\t\t This staff is not in this file.\n\n";
+			cin.get();
+			Search();
+		}
+	}
 }
 void staff::quit()
 {
 	system("cls");
+	if (changes > 0)
+	{
+
+	}
+	else
+	{
+
+	}
 
 }
 bool search(string filename, string s_name, string list_name)
