@@ -44,10 +44,12 @@ void staff::add()
 }
 void staff::Remove()
 {
+	int line = 0;
 	string r_name, name;
 	system("cls");
 	cout << "\t\t\t You can go back by typing \"exit\"!\n\n";
 	cout << "\t\t\t Please enter the staff's name you want to remove: "; cin >> name;
+	cout << endl;
 	cin.ignore();
 
 	if (name == "exit")
@@ -68,11 +70,13 @@ void staff::Remove()
 			{
 				while (getline(file_r, r_name))
 				{
-					r_name.replace(r_name.find(name), name.length(), "");
-
-					if (!r_name.empty())
+					if (r_name.find(name) == string::npos)
 					{
-						file_r1 << r_name << endl;
+						line++;
+					}
+					else
+					{
+						break;
 					}
 				}
 				cout << "\t\t\t Staff " << name << " has now been removed.\n\n";
@@ -98,6 +102,7 @@ void staff::Remove()
 }
 void staff::update()
 {
+	int line = 0;
 	string u_name, name, age, email, role, phone, u_info;
 	system("cls");
 	cout << "\t\t\t You can go back by typing \"exit\"!\n\n";
@@ -137,17 +142,16 @@ void staff::update()
 				{
 					while (getline(file_u, u_info))
 					{
-						u_info.replace(u_info.find(u_name), u_name.length(), "");
-
-						if (!u_info.empty())
+						if (u_info.find(name) == string::npos)
 						{
-							file_u1 << u_info << endl;
+							line++;
 						}
 						else
 						{
-							file_u1 << name << " " << age << " " << email << " " << role << " " << phone << endl;
+							break;
 						}
 					}
+					file_u1 << name << " " << age << " " << email << " " << role << " " << phone << endl;
 					cout << "\t\t\t Staff " << name << " has now been updated.\n\n";
 					changes += 1;
 					file_u.close();
