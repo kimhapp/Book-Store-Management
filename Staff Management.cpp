@@ -44,7 +44,7 @@ void staff::add()
 }
 void staff::Remove()
 {
-	int line = 0;
+	int line = 0, lineFound = 0;
 	string r_name, name;
 	system("cls");
 	cout << "\t\t\t You can go back by typing \"exit\"!\n\n";
@@ -70,26 +70,32 @@ void staff::Remove()
 			{
 				while (getline(file_r, r_name))
 				{
-					if (r_name.find(name) == string::npos)
+					line++;
+					if (r_name.find(name) != string::npos)
 					{
-						line++;
-					}
-					else
-					{
-						break;
+						lineFound = line;
 					}
 				}
-				cout << "\t\t\t Staff " << name << " has now been removed.\n\n";
-				changes += 1;
-				file_r.close();
-				file_r1.close();
 
-				const char* f_r = tempFile.c_str();
-				const char* f_r1 = copyFile.c_str();
-				std::remove(f_r);
-				std::rename(f_r1, f_r);
+				for (int i = 0; i < line; i++)
+				{
+					if (i != lineFound)
+					{
+						file_r1 << r_name << endl;
+					}
 
-				system("PAUSE");
+					cout << "\t\t\t Staff " << name << " has now been removed.\n\n";
+					changes += 1;
+					file_r.close();
+					file_r1.close();
+
+					const char* f_r = tempFile.c_str();
+					const char* f_r1 = copyFile.c_str();
+					std::remove(f_r);
+					std::rename(f_r1, f_r);
+
+					system("PAUSE");
+				}
 			}
 		}
 		else
@@ -102,11 +108,12 @@ void staff::Remove()
 }
 void staff::update()
 {
-	int line = 0;
-	string u_name, name, age, email, role, phone, u_info;
+	int line = 0, lineFound = 0 ;
+	string name, u_name, age, u_age , email, u_email, role, u_role, phone, u_phone, u_info;
 	system("cls");
 	cout << "\t\t\t You can go back by typing \"exit\"!\n\n";
-	cout << "\t\t\t Please enter the staff's name you want to update: "; cin >> u_name;
+	cout << "\t\t\t Please enter the staff's name you want to update: "; 
+	cin >> name;
 
 	if (u_name == "exit")
 	{
@@ -114,56 +121,56 @@ void staff::update()
 	}
 	else
 	{
-		if (search(tempFile, u_name, u_info) == true)
+		if (search(tempFile, name, u_name) == true)
 		{
-			system("cls");
-			cout << "\t\t\t You can go back by typing \"exit\"!\n\n";
-			cout << "\t\t\t Please enter staff's info!\n\n";
-			cout << "\t\t\t Staff's name: "; cin >> name;
-			cout << "\t\t\t Staff's age: "; cin >> age;
-			cout << "\t\t\t Staff's email: "; cin >> email;
-			cout << "\t\t\t Staff's role: "; cin >> role;
-			cout << "\t\t\t Staff's phone: "; cin >> phone;
-			cin.ignore();
-
-			if (name == "exit" || age == "exit" || email == "exit" || role == "exit" || phone == "exit")
+			ofstream file_u1(copyFile, ios::app | ios::binary);
+			ifstream file_u(tempFile, ios::in | ios::binary);
+			if (!file_u)
 			{
-				system("PAUSE");
+				openFail();
 			}
 			else
 			{
-				ofstream file_u1(copyFile, ios::app | ios::binary);
-				ifstream file_u(tempFile, ios::in | ios::binary);
-				if (!file_u)
+				while (file_u >> u_name >> u_age >> u_email >> u_role >> u_phone)
 				{
-					openFail();
-				}
-				else
-				{
-					while (getline(file_u, u_info))
+					line++;
+					if (u_name == name)
 					{
-						if (u_info.find(name) == string::npos)
-						{
-							line++;
-						}
-						else
-						{
-							break;
-						}
+						lineFound = line;
 					}
-					file_u1 << name << " " << age << " " << email << " " << role << " " << phone << endl;
-					cout << "\t\t\t Staff " << name << " has now been updated.\n\n";
-					changes += 1;
-					file_u.close();
-					file_u1.close();
-
-					const char* f_u = tempFile.c_str();
-					const char* f_u1 = copyFile.c_str();
-					std::remove(f_u);
-					std::rename(f_u1, f_u);
-
-					system("PAUSE");
 				}
+				line = 0;
+
+				while (getline(file_u, u_info))
+				{
+					line++;
+					if (line != lineFound)
+					{
+						file_u1 << u_info << endl;
+					}
+				}
+
+				system("cls");
+				cout << "\t\t\t You cannot go back during updating the list.\n\n";
+				cout << "\t\t\t Please enter staff's info!\n\n";
+				cout << "\t\t\t Staff's name: "; cin >> name;
+				cout << "\t\t\t Staff's age: "; cin >> age;
+				cout << "\t\t\t Staff's email: "; cin >> email;
+				cout << "\t\t\t Staff's role: "; cin >> role;
+				cout << "\t\t\t Staff's phone: "; cin >> phone;
+
+				file_u1 << name << " " << age << " " << email << " " << role << " " << phone << endl;
+				cout << "\t\t\t Staff " << name << " has now been updated.\n\n";
+				changes += 1;
+				file_u.close();
+				file_u1.close();
+
+				const char* f_u = tempFile.c_str();
+				const char* f_u1 = copyFile.c_str();
+				std::remove(f_u);
+				std::rename(f_u1, f_u);
+
+				system("PAUSE");
 			}
 		}
 		else
@@ -370,6 +377,7 @@ bool search(string filename, string s_name, string list_name)
 	if (!file_find)
 	{
 		Staff.openFail();
+		return false;
 	}
 	else
 	{
