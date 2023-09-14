@@ -177,6 +177,8 @@ void registration()
 	}
 	else
 	{
+		ofstream new_file("user_data.txt", ios::app | ios::binary);
+		new_file.close();
 		ifstream filein("user_data.txt", ios::in | ios::binary);
 		if (!filein)
 		{

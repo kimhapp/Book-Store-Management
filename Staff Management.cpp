@@ -68,7 +68,7 @@ void staff::Remove()
 			{
 				while (getline(file_r, r_name))
 				{
-					r_name.replace(r_name.find(name), r_name.length(), "");
+					r_name.replace(r_name.find(name), name.length(), "");
 
 					if (!r_name.empty())
 					{
@@ -137,7 +137,7 @@ void staff::update()
 				{
 					while (getline(file_u, u_info))
 					{
-						u_info.replace(u_info.find(u_name), u_info.length(), "");
+						u_info.replace(u_info.find(u_name), u_name.length(), "");
 
 						if (!u_info.empty())
 						{
